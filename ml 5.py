@@ -97,5 +97,4 @@ if uploaded_file is not None:
     st.write('Confusion Matrix: \n', confusion_matrix(ytest, pred))
 else:
     st.write("Please upload a CSV file.")
-if '_name_=="_main_"
-main()
+
