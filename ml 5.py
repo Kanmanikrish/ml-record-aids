@@ -3,9 +3,11 @@ import numpy as np
 from collections import Counter
 import math
 import streamlit as st
-def main():
+
+# Title
 st.write("BYTES BRIGADES")
-st.title("Sentiment Analysis with Multinomial Naive Bayes")
+st.title("Naïve Bayesian Classifier model")
+
 # File uploader
 uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
 
@@ -31,11 +33,12 @@ if uploaded_file is not None:
     Xtrain, Xtest, ytrain, ytest = train_test_split(X, y)
 
     # Count Vectorization
-    def count_vectorize(corpus):
-        vocab = Counter()
-        for doc in corpus:
-            vocab.update(doc.split())
-        vocab = sorted(vocab.keys())
+    def count_vectorize(corpus, vocab=None):
+        if vocab is None:
+            vocab = Counter()
+            for doc in corpus:
+                vocab.update(doc.split())
+            vocab = sorted(vocab.keys())
 
         def vectorize(doc):
             vec = np.zeros(len(vocab))
@@ -47,7 +50,7 @@ if uploaded_file is not None:
         return np.array([vectorize(doc) for doc in corpus]), vocab
 
     Xtrain_dm, vocab = count_vectorize(Xtrain)
-    Xtest_dm, _ = count_vectorize(Xtest)
+    Xtest_dm, _ = count_vectorize(Xtest, vocab)
 
     # Custom Multinomial Naive Bayes
     class MultinomialNB:
@@ -67,7 +70,7 @@ if uploaded_file is not None:
     pred = clf.predict(Xtest_dm)
 
     # Print predictions
-    for doc, p in zip(Xtrain, pred):
+    for doc, p in zip(Xtest, pred):
         p = 'pos' if p == 1 else 'neg'
         st.write(f"{doc} -> {p}")
 
@@ -97,4 +100,3 @@ if uploaded_file is not None:
     st.write('Confusion Matrix: \n', confusion_matrix(ytest, pred))
 else:
     st.write("Please upload a CSV file.")
-
