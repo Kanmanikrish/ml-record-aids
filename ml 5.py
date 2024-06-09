@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 from collections import Counter
-import math
 import streamlit as st
 
 # Title
@@ -87,11 +86,15 @@ if uploaded_file is not None:
 
     def precision_score(y_true, y_pred):
         cm = confusion_matrix(y_true, y_pred)
-        return np.diag(cm) / cm.sum(axis=0)
+        precision = np.diag(cm) / cm.sum(axis=0)
+        precision[np.isnan(precision)] = 0  # Replace NaNs with 0
+        return precision
 
     def recall_score(y_true, y_pred):
         cm = confusion_matrix(y_true, y_pred)
-        return np.diag(cm) / cm.sum(axis=1)
+        recall = np.diag(cm) / cm.sum(axis=1)
+        recall[np.isnan(recall)] = 0  # Replace NaNs with 0
+        return recall
 
     st.write('Accuracy Metrics: \n')
     st.write('Accuracy: ', accuracy_score(ytest, pred))
@@ -100,3 +103,4 @@ if uploaded_file is not None:
     st.write('Confusion Matrix: \n', confusion_matrix(ytest, pred))
 else:
     st.write("Please upload a CSV file.")
+
